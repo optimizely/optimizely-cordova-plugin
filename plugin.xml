@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+        id="com.optimizely.cordova"
+        version="0.1.0">
+
+  <name>Optimizely Cordova Plugin</name>
+
+  <engines>
+    <engine name="cordova" version=">=3.4.0"/>
+  </engines>
+
+  <asset src="www/optimizely.js" target="js/optimizely.js"/>
+
+  <js-module src="www/optimizely.js" name="Optimizely">
+    <clobbers target="optimizely" />
+  </js-module>
+
+  <platform name="android">
+
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="Optimizely">
+        <param name="android-package" value="com.optimizely.cordova.OptimizelyCordovaPlugin"/>
+      </feature>
+    </config-file>
+
+    <source-file src="src/android/android-support-v4.jar" target-dir="libs" framework="true"/>
+    <source-file src="src/android/okio-1.4.0.jar" target-dir="libs" framework="true"/>
+    <source-file src="src/android/okhttp-2.4.0.jar" target-dir="libs" framework="true"/>
+    <source-file src="src/android/gson-2.3.jar" target-dir="libs" framework="true"/>
+    <source-file src="src/android/Optimizely-1.0.1-SNAPSHOT.jar" target-dir="libs" framework="true"/>
+    <source-file src="src/android/OptimizelyCordovaPlugin.java" target-dir="src/com/optimizely/cordova/"/>
+  </platform>
+
+  <platform name="ios">
+
+    <config-file target="config.xml" parent="/widget">
+      <feature name="Optimizely">
+        <param name="ios-package" value="OptimizelyCordovaPlugin" />
+      </feature>
+    </config-file>
+
+    <header-file src="src/ios/OptimizelyCordovaPlugin.h" target-dir="OptimizelyCordovaPlugin"/>
+    <source-file src="src/ios/OptimizelyCordovaPlugin.m" target-dir="OptimizelyCordovaPlugin"/>
+
+    <framework src="src/ios/Optimizely.framework" custom="true" />
+    <framework src="libicucore.dylib" />
+    <framework src="libsqlite3.dylib" />
+    <framework src="AudioToolbox.framework" />
+    <framework src="CFNetwork.framework" />
+    <framework src="Foundation.framework" />
+    <framework src="MobileCoreServices.framework" />
+    <framework src="Security.framework" />
+    <framework src="SystemConfiguration.framework" />
+    <framework src="UIKit.framework" />
+  </platform>
+
+</plugin>
