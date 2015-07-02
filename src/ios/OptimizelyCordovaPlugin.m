@@ -2,6 +2,9 @@
 
 @implementation OptimizelyCordovaPlugin
 
+static NSString *const STRING_VARIABLE_TYPE = @"string";
+static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
+
 - (void)enableEditor:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = [command callbackId];
@@ -24,6 +27,26 @@
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK
                                messageAsString:@"Optimizely Started"];
+
+    [self success:result callbackId:callbackId];
+}
+
+- (void)booleanVariable:(CDVInvokedUrlCommand*)command
+{
+    NSString* callbackId = [command callbackId];
+    NSString* variableKey = [[command arguments] objectAtIndex:0];
+    BOOL variableValue = [[command arguments] objectAtIndex:1];
+
+    OptimizelyVariableKey *variable = [OptimizelyVariableKey optimizelyKeyWithKey:variableKey defaultBOOL:variableValue];
+    [Optimizely preregisterVariableKey:variable];
+
+    if (_liveVariablesMap == nil) {
+      _liveVariablesMap = [[NSMutableDictionary alloc] init];
+    }
+    _liveVariablesMap[variableKey] = variable;
+
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK];
 
     [self success:result callbackId:callbackId];
 }
@@ -51,12 +74,22 @@
 {
     NSString* callbackId = [command callbackId];
     NSString* variableKey = [[command arguments] objectAtIndex:0];
+    NSString* variableType = [[command arguments] objectAtIndex:1];
+
     OptimizelyVariableKey *optimizelyVariableKey = [_liveVariablesMap valueForKey:variableKey];
     CDVPluginResult* result;
     if (optimizelyVariableKey != nil) {
+      id variableValue;
+
+      if ([variableType isEqualToString:STRING_VARIABLE_TYPE]) {
+        variableValue = [Optimizely stringForKey:optimizelyVariableKey];
+      } else if ([variableType isEqualToString:BOOL_VARIABLE_TYPE]) {
+        variableValue = [NSNumber numberWithBool:[Optimizely boolForKey:optimizelyVariableKey]];
+      }
+
       NSDictionary *resultDictionary = @{
         @"variableKey": variableKey,
-        @"variableValue": [Optimizely stringForKey:optimizelyVariableKey]
+        @"variableValue": variableValue
       };
 
       result = [CDVPluginResult

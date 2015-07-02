@@ -25,7 +25,12 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray data, final CallbackContext callbackContext) throws JSONException {
 
-        if (action.equals("codeBlock")) {
+        if (action.equals("booleanVariable")) {
+            String variableKey = data.getString(0);
+            boolean variableValue = data.getBoolean(1);
+            booleanVariable(variableKey, variableValue, callbackContext);
+            return true;
+        } else if (action.equals("codeBlock")) {
             String codeBlockKey = data.getString(0);
             JSONArray codeBlockBranchNamesJSON = data.getJSONArray(1);
             ArrayList<String> codeBlockBranchNames = new ArrayList();
@@ -96,6 +101,25 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
             }
 
             liveVariables.put(variableKey, Optimizely.stringVariable(variableKey, variableValue));
+            callbackContext.success();
+          } catch (Exception e) {
+            callbackContext.error("Unable to register live variable: " + e.getMessage());
+          }
+        }
+      });
+      return true;
+    }
+
+    private boolean booleanVariable(final String variableKey, final boolean variableValue,
+      final CallbackContext callbackContext) {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          try {
+            if (liveVariables == null) {
+              liveVariables = new HashMap();
+            }
+
+            liveVariables.put(variableKey, Optimizely.booleanVariable(variableKey, variableValue));
             callbackContext.success();
           } catch (Exception e) {
             callbackContext.error("Unable to register live variable: " + e.getMessage());

@@ -6,6 +6,7 @@
 @property (nonatomic, strong) NSMutableDictionary *liveVariablesMap;
 @property (nonatomic, strong) NSMutableDictionary *codeBlocksMap;
 
+- (void) booleanVariable:(CDVInvokedUrlCommand*)command;
 - (void) codeBlock:(CDVInvokedUrlCommand*)command;
 - (void) enableEditor:(CDVInvokedUrlCommand*)command;
 - (void) executeCodeBlock:(CDVInvokedUrlCommand*)command;

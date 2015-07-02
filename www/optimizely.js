@@ -1,6 +1,12 @@
 /*global cordova, module*/
 
 module.exports = {
+    booleanForKey: function(variableKey, successCallback, errorCallback) {
+      cordova.exec(successCallback, errorCallback, "Optimizely", "variableForKey", [variableKey, 'boolean']);
+    },
+    booleanVariable: function(variableKey, variableValue, successCallback, errorCallback) {
+      cordova.exec(successCallback, errorCallback, "Optimizely", "booleanVariable", [variableKey, variableValue]);
+    },
     codeBlock: function(codeBlockKey, codeBranchNames, successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "Optimizely", "codeBlock", [codeBlockKey, codeBranchNames]);
     },
@@ -18,7 +24,7 @@ module.exports = {
     stringVariable: function(variableKey, variableValue, successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "Optimizely", "stringVariable", [variableKey, variableValue]);
     },
-    variableForKey: function(variableKey, successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "Optimizely", "variableForKey", [variableKey]);
+    stringForKey: function(variableKey, successCallback, errorCallback) {
+      cordova.exec(successCallback, errorCallback, "Optimizely", "variableForKey", [variableKey, 'string']);
     }
 };
