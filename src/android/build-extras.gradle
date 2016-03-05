@@ -1,0 +1,12 @@
+repositories {
+  jcenter()
+  maven {
+    url 'http://dl.bintray.com/optimizely/optimizely'
+  }
+}
+
+dependencies {
+  compile('com.optimizely:optimizely:+@aar') {
+      transitive = true
+  }
+}

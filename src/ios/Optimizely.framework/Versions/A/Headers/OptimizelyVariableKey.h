@@ -1,10 +1,12 @@
 //
-//  OptimizelyKey.h
+//  OptimizelyVariableKey.h
 //  Optimizely
 //
-//  Created by Optimizely Engineering on 5/13/14.
-//  Copyright (c) 2014 Optimizely Engineering. All rights reserved.
+//  Created by Optimizely on 5/13/14.
+//  Copyright (c) 2014-2015 Optimizely. All rights reserved.
 //
+
+#import <UIKit/UIKit.h>
 
 /** This class defines a key that can be used to retrieve Optimizely live variables.
  *
@@ -61,6 +63,8 @@
 - (BOOL)isEqualToOptimizelyVariableKey:(OptimizelyVariableKey *)key;
 @end
 
+#if __has_feature(objc_arc)
+
 #define _OptimizelyVariableKey(key, type, defVal) OptimizelyVariableKey * key; \
     static void __attribute__((constructor)) initialize_ ## key() { \
         @autoreleasepool { \
@@ -68,6 +72,17 @@
             [Optimizely preregisterVariableKey:key]; \
         } \
     }
+
+#else
+
+#define _OptimizelyVariableKey(key, type, defVal) OptimizelyVariableKey * key; \
+    static void __attribute__((constructor)) initialize_ ## key() { \
+        key = [OptimizelyVariableKey optimizelyKeyWithKey:@#key default ## type:defVal]; \
+        [key retain]; \
+        [Optimizely preregisterVariableKey:key]; \
+    }
+
+#endif
 
 /** Defines an OptimizelyKey for variables of type NSString
  * @param key The name of this OptimizelyKey.

@@ -2,8 +2,10 @@
 //  OptimizelyCodeBlocksKey.h
 //  Optimizely
 //
-//  Created by Optimizely Engineering on 2/19/15.
-//  Copyright (c) 2015 Optimizely Engineering. All rights reserved.
+//  Created by Optimizely on 2/19/15.
+//  Copyright (c) 2015 Optimizely. All rights reserved.
+
+#import <SystemConfiguration/SystemConfiguration.h>
 
 /** This class defines a key that can be used to define an Optimizely code blocks experiment.
  *
@@ -39,6 +41,8 @@
 @end
 
 // Defines an OptimizelyCodeBlocksKey for a code blocks experiment.
+#if __has_feature(objc_arc)
+
 #define OptimizelyCodeBlocksKeyWithBlockNames(key, ...) OptimizelyCodeBlocksKey * key; \
     static void __attribute__((constructor)) initialize_ ## key() { \
         @autoreleasepool { \
@@ -46,3 +50,14 @@
             [Optimizely preregisterBlockKey:key]; \
         } \
     }
+
+#else
+
+#define OptimizelyCodeBlocksKeyWithBlockNames(key, ...) OptimizelyCodeBlocksKey * key; \
+    static void __attribute__((constructor)) initialize_ ## key() { \
+        key = [OptimizelyCodeBlocksKey optimizelyCodeBlocksKey:@#key blockNames:[NSArray arrayWithObjects:__VA_ARGS__, nil]]; \
+        [key retain]; \
+        [Optimizely preregisterBlockKey:key]; \
+    }
+
+#endif

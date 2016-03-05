@@ -2,9 +2,11 @@
 //  OptimizelyExperimentData.h
 //  Optimizely
 //
-//  Created by Optimizely Engineering on 2/19/15.
-//  Copyright (c) 2015 Optimizely Engineering. All rights reserved.
+//  Created by Optimizely on 2/19/15.
+//  Copyright (c) 2015 Optimizely. All rights reserved.
 //
+
+#import <UIKit/UIKit.h>
 
 /**
  *  Type describing the current state of the experiment
@@ -12,6 +14,8 @@
 typedef NS_ENUM (NSUInteger, OptimizelyExperimentDataState) {
     /** Experiment is not running on the Optimizely dashboard. Try starting the experiment on https://www.optimizely.com */
     OptimizelyExperimentDataStateDisabled,
+    /** Experiment is pending activation. Usually this means that you can now manually activate it through [Optimizely activateManualExperiment:] */
+    OptimizelyExperimentDataStatePending,
     /** Experiment is running */
     OptimizelyExperimentDataStateRunning,
     /** Experiment has been deactivated
@@ -30,6 +34,41 @@ typedef NS_ENUM (NSUInteger, OptimizelyExperimentDataState) {
  */
 @interface OptimizelyExperimentData : NSObject
 
+/** Property that tells you the audiences currently associated with this experiment */
+@property (nonatomic, readonly, strong) NSString *audiences;
+
+/** Property that tells you the experiment Id */
+@property (nonatomic, readonly, strong) NSString *experimentId;
+
+/** Property that tells you the experiment Name */
+@property (nonatomic, readonly, strong) NSString *experimentName;
+
+/** Property that tells you whether or not your experiment is a manual activation experiment. */
+@property (nonatomic, readonly) BOOL isManual;
+
+/** Property that tells you whether or not your was locked out of activation, because another experiment
+ *  was making a conflicting change or your assets did not finish downloading in time
+ */
+@property (nonatomic, readonly) BOOL locked;
+
+/** Property that tells you the state of the experiment */
+@property (readonly) OptimizelyExperimentDataState state;
+
+/** Property that tells you the targeting conditions currently associated with this experiment */
+@property (nonatomic, readonly, strong) NSString *targetingConditions;
+
+/** Property that tells you whether or not your user has met targeting conditions */
+@property (nonatomic, readonly) BOOL targetingMet;
+
+/** Property that stores the dictionary representation of all variations associated with this experiment */
+@property (nonatomic, readonly, strong) NSArray *variations;
+
+/** Property that tells you the active variation Id (can be nil if not bucketed) */
+@property (nonatomic, readonly, strong) NSString *variationId;
+
+/** Property that tells you the active variation Name (can be nil if not bucketed) */
+@property (nonatomic, readonly, strong) NSString *variationName;
+
 /** Property that counts the number of times the user has seen this experiment */
 @property (nonatomic, readonly) NSUInteger visitedCount;
 
@@ -38,31 +77,5 @@ typedef NS_ENUM (NSUInteger, OptimizelyExperimentDataState) {
 
 /** Property that tells you whether or not the user has seen this experiment this session */
 @property (nonatomic, readonly) BOOL visitedThisSession;
-
-/** Property that tells you whether or not your user has met targeting conditions */
-@property (nonatomic, readonly) BOOL targetingMet;
-
-/** Property that tells you whether or not your was locked out of activation, because another experiment
- *  was making a conflicting change or your assets did not finish downloading in time
- */
-@property (nonatomic, readonly) BOOL locked;
-
-/** Property that tells you the experiment Id */
-@property (nonatomic, readonly, strong) NSString *experimentId;
-
-/** Property that tells you the experiment Name */
-@property (nonatomic, readonly, strong) NSString *experimentName;
-
-/** Property that tells you the variation Id (can be nil if not bucketed) */
-@property (nonatomic, readonly, strong) NSString *variationId;
-
-/** Property that tells you the variation Name (can be nil if not bucketed) */
-@property (nonatomic, readonly, strong) NSString *variationName;
-
-/** Property that tells you the targeting conditions currently associated with this experiment */
-@property (nonatomic, readonly, strong) NSString *targetingConditions;
-
-/** Property that tells you the state of the experiment */
-@property (readonly) OptimizelyExperimentDataState state;
 
 @end
