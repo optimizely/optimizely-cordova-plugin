@@ -1,29 +1,47 @@
 //
-//  Copyright (c) 2014 Optimizely. All rights reserved.
+//  Optimizely.h
+//  Optimizely
 //
-//  Optimizely iOS SDK Uses Following Open Source Libraries
+//  Copyright (c) 2014-2015 Optimizely. All rights reserved.
+//
+//  Optimizely iOS SDK Uses the Following Open Source Libraries
 //       - AFDownloadRequestOperation
 //       - AFNetworking
 //       - CTObjectiveCRuntimeAdditions
 //       - FMDB
 //       - NSDateRFC1123
 //       - SocketRocket
-//
-//  Contributors
-//       - Kasra Kyanzadeh
-//       - Yonatan Kogan
-//       - Marco Sgrignuoli
-//       - Richard Klafter
-//       - Alex Medearis
-//       - Chrix Finne
-//       - Rama Ranganath
-//       - Hemant Verma
 
 #import "OptimizelyCodeBlocksKey.h"
 #import "OptimizelyExperimentData.h"
 #import "OptimizelyVariableKey.h"
+#import "OptimizelyPlugin.h"
+#import "OptimizelyDimension.h"
 
+/**
+ * Wrapper for a callback handler block
+ */
 typedef void (^OptimizelySuccessBlock)(BOOL success, NSError *error);
+
+/**
+ * Enumeration type showing the status of the current Optimizely singleton's state,
+ * regarding whether it has started, is in the process of starting up, or has not been
+ * started.
+ *
+ * This enumeration is accessible through the property startingState, accessed through the
+ * `+sharedInstance` method. To start the Optimizely singleton, you need to call
+ */
+typedef NS_ENUM (NSInteger, OptimizelyInitializationState) {
+    /** The Optimizely singleton has not started. */
+    OptimizelyInitializationStateIsNotStarted,
+    /**
+     * The Optimizely singleton is starting and initializing required components.
+     * This helps to avoid double initialization.
+     */
+    OptimizelyInitializationStateIsStarting,
+    /** The Optimizely singleton has started and all required components are initialized. */
+    OptimizelyInitializationStateIsStarted
+};
 
 @interface UIView (Optimizely)
 @property (nonatomic, strong) NSString *optimizelyId;
@@ -159,17 +177,12 @@ typedef void (^OptimizelySuccessBlock)(BOOL success, NSError *error);
 /** This method informs Optimizely that a revenue goal custom event occured.
  *
  * @param revenueAmount The revenue amount in cents associated with the event
+ * @param description The description of the revenue. This will only be shown in the raw event log
  * @see +dispatch
  */
-+ (void)trackRevenue:(int)revenueAmount;
++ (void)trackRevenue:(int)revenueAmount withDescription:(NSString *)description;
 
-/** This method registers a callback method for when a given variable is changed.
- *
- * @param key The Optimizely key associated with the variable you want to watch
- * @param callback The callback method that will be invoked whenever the variable is changed. It takes in two parameters, the first being the key of the changed variable and the second is the variable's new value
- */
-+ (void)registerCallbackForVariableWithKey:(OptimizelyVariableKey *)key callback:(void (^)(NSString *, id))callback;
-
+/** @name Utilities and Helpers */
 
 /** This method manually refreshes all currently running experiments so as to take into account
  * the most recent targeting conditions and tags.
@@ -177,6 +190,79 @@ typedef void (^OptimizelySuccessBlock)(BOOL success, NSError *error);
  * Note: The use of this method may invalidate statistical results.
  */
 + (void)refreshExperiments;
+
+/** This method gets the experiment data for a given experimentId
+ *
+ * @param experimentId The id of the particular experiment.
+ * The ID is available in the bottom of the experiment details panel from the project view.
+ *
+ * @return OptimizelyExperimentData returns the experiment data if the experiment is found. returns nil otherwise
+ */
+
++ (OptimizelyExperimentData *)getExperimentDataById:(NSString *)experimentId;
+
+/** This method determines whether a user is in a particular audience.
+ *
+ * @param audienceId The audienceId that we're trying to check against
+ *
+ * @return BOOL true if user satisfies the audience conditions, false otherwise
+ */
++ (BOOL)isUserInAudience:(NSString *)audienceId;
+
+/** This method resets the bucketing metadata that is cached on device.
+ * This will also clear the random user id, so that next time the experiment is activated, the user will be bucketed as a fresh user.
+ * This will also clear the Optimizely DataFile from storage.
+ */
++ (void)resetUserBucketing;
+
+/** This method returns a copy of all audiences that are defined in the data file.
+ * If this is called before Optimizely starts, it will return an empty array.
+ * If there are no audiences, it will return an empty array.
+ * Each audience will be an index in the NSArray represented by a NSDictionary.
+ * Each NSDictionary will have 3 keys: @"name", @"audience_id", and @"conditions"
+ * @"name" keys to a NSString of the audience name in the web editor.
+ * @"audience_id" keys to a NSString of the unique audience identifier.
+ * @"conditions" keys to a JSON representation of the audience conditions.
+ *
+ * @return NSArray of all audiences.
+ */
++ (NSArray *)getAudiences;
+
+/** This method returns a copy of all dimensions that are defined in the data file.
+ * If this is called before Optimizely starts, it will return an empty array.
+ * If there are no dimensions, it will return an empty array.
+ * Each dimension will be an index in the NSArray represented by an instance of the OptimizelyDimension class.
+ */
++ (NSArray *)getDimensions;
+
+/** Activates a manual experiment with the given id. If it passes targeting, the experiment
+ * will be bucketed and marked as visited. This must be called after startOptimizelyWithAPIToken.
+ *
+ * @param experimentId The id of the experiment you wish to activate
+ * @return boolean depending on whether or not we successfully activated the experiment. Turn on verbose logging for more debugging info
+ */
++ (BOOL)activateManualExperiment:(NSString *)experimentId;
+
+/** Activates all manual experiments in your data file. If it passes targeting, the experiments
+ * will be bucketed and marked as visited. This must be called after startOptimizelyWithAPIToken.
+ *
+ * @return boolean depending on whether or not we were able to activate all manual experiments. Turn on verbose logging for more debugging info.
+ */
++ (BOOL)activateAllManualExperiments;
+
+/** Buckets the user into a particular variation of an experiment.
+ * This function must be called before startOptimizelyWithAPI.
+ * If the experimentId or variationId is invalid, there will be no effect.
+ * If the relevant data is not downloaded yet, nothing will be done.
+ * This function only takes effect if the app is running in normal mode.
+ * This function should be used for QA ONLY, since forcing a variation will clear out any saved experiment states for the user.
+ *
+ * DO NOT RELEASE WITH THIS FUNCTION. THIS FUNCTION IS FOR QA PURPOSES ONLY.
+ *
+ * @param variationId The id of the variation you wish to bucket the user into.
+ * @param experimentId The id of the experiment you are bucketing within.
+ */
++ (void)forceVariation:(NSString *)variationId ofExperiment:(NSString *)experimentId;
 
 #pragma mark - Variable getters
 /** @name Live Variables */
@@ -229,6 +315,14 @@ typedef void (^OptimizelySuccessBlock)(BOOL success, NSError *error);
  * @return The value of this variable in the active experiment (default if no active experiment)
  */
 + (BOOL)boolForKey:(OptimizelyVariableKey *)key;
+
+/** This method registers a callback method for when a given variable is changed.
+ *
+ *  Method signature is: void (^callback)(NSString *, id)
+ *  @param key The Optimizely key associated with the variable you want to watch
+ *  @param callback The callback method that will be invoked whenever the variable is changed. It takes in two parameters, the first being the key of the changed variable and the second is the variable's new value
+ */
++ (void)registerCallbackForVariableWithKey:(OptimizelyVariableKey *)key callback:(void (^)(NSString *, id))callback;
 
 #pragma mark - Code Blocks
 /** @name Code Blocks */
@@ -285,6 +379,14 @@ typedef void (^OptimizelySuccessBlock)(BOOL success, NSError *error);
                 blockFour:(void (^)(void))blockFour
              defaultBlock:(void (^)(void))defaultBlock;
 
+/** This method registers a callback method for when a given code block is changed.
+ *
+ *  Method signature is: void (^callback)()
+ *  @param key The Optimizely key associated with the code block you want to watch
+ *  @param callback The callback method that will be invoked whenever the code block is changed.
+ */
++ (void)registerCallbackForCodeBlockWithKey:(OptimizelyCodeBlocksKey *)key callback:(void (^)())callback;
+
 /* Should not be called directly.  These methods register a key with the editor in edit mode. */
 + (void)preregisterVariableKey:(OptimizelyVariableKey *)key;
 + (void)preregisterBlockKey:(OptimizelyCodeBlocksKey *)key;
@@ -297,18 +399,6 @@ typedef void (^OptimizelySuccessBlock)(BOOL success, NSError *error);
 
 #pragma mark - Properties
 /** @name Properties */
-
-/**
- *  @deprecated.  Use `allExperiments` or `visitedExperiments`.
- *
- *  Provides an array of all the experiments currently active for the user to the variation
- *  they're bucketed into for that experiment. The metadata includes experiment Id, variation Id,
- *  experiment description and variation description.
- *
- *  When an experimenet is viewed, Optimizely will trigger an NSNotification with the key "OptimizelyExperimentViewedNotification".
- *  The userInfo will have metadata which includes experiment Id, variation Id, experiment description and variation description.
- */
-@property (readonly, strong, nonatomic) NSArray *activeExperiments __attribute((deprecated("Use allExperiments or visitedExperiments")));
 
 /**
  *  This returns a list of `OptimizelyExperimentData` objects that will encompass all experiments.
@@ -337,17 +427,23 @@ typedef void (^OptimizelySuccessBlock)(BOOL success, NSError *error);
 /** The current SDK version. */
 @property (readonly, strong) NSString *sdkVersion;
 
-/** A unique identifier for the current user.
+/** A unique identifier for the current user set by you, that can be used to identifier end users across platforms.
  * If a custom identifier is provided, it must be set prior to calling `+startWithProjectId:launchOptions:`.
- * Defaults to the device UUIDString if no identifier is provided.
+ * Setting the `universalUserId` to nil will clear the UUID.
  */
-@property (nonatomic, strong) NSString *userId;
+@property (nonatomic, readwrite, strong) NSString *universalUserId;
+
+/**
+ * This is a Unique ID generated by the Optimizely SDK.
+ * An Optimizely End User ID is assigned to each of your end users who successfully start the SDK.
+ */
+@property (nonatomic, readonly, strong) NSString *optimizelyEndUserId;
 
 /** When set to true, provides verbose logging details that may be useful for debugging.
  */
 @property (nonatomic, readwrite) BOOL verboseLogging;
 
-/**The frequency (in seconds) at which events are sent to Optimizley and the experiment
+/**The frequency (in seconds) at which events are sent to Optimizely and the experiment
  * data file is fetched from server. Defaults to 2 minutes.
  *
  * Setting this to zero or negative value will disable automatic sending
@@ -388,8 +484,18 @@ typedef void (^OptimizelySuccessBlock)(BOOL success, NSError *error);
  */
 @property (nonatomic, readwrite) BOOL disableGesture;
 
-#pragma mark - NSNotification Keys
+/** This returns the initialization state of the Optimizely singleton. */
+@property (nonatomic, readonly) OptimizelyInitializationState startingState;
 
+#pragma mark - NSNotification Keys
+/**
+ *  Constant NSNotification key that is triggered when Optimizely has completed startup.
+ */
+extern NSString *const OptimizelyStartedNotification;
+/**
+ *  Constant NSNotification key that is triggered when Optimizely has failed to startup.
+ */
+extern NSString *const OptimizelyFailedToStartNotification;
 /**
  *  Constant NSNotification key that is triggered when an experiment is viewed by the user. The userInfo in the notification
  *  will have metadata which includes experiment Id, variation Id, experiment description and variation description. For more
@@ -408,22 +514,21 @@ extern NSString *const OptimizelyNewDataFileLoadedNotification;
 extern NSString *const OptimizelyGoalTriggeredNotification;
 
 #pragma mark - Integrations
-
-/** @name Integrations*/
 /**
- *  This activates the Optimizely SDK's Mixpanel integration. This behaves identically to web,
- *  which you can read about [here](https://help.optimizely.com/hc/en-us/articles/200040025-Integrating-Optimizely-with-Mixpanel),
- *  except that it cannot (yet) be activated through the website.
- *  @warning This currently *must* be called after `startOptimizelyWithAPIToken: launchOptions:` returns!
+ * Register the given plugin. This function should be called by the end user if the
+ * plugin that they wish to use does not implement auto-registry, or if your project is
+ * written in Swift (which lacks macro support). Plugin maintainers
+ * should prefer using the OptimizelyRegisterPlugin macro from OptimizelyPlugin.h
+ * @param plugin the plugin instance to register. Only one plugin instance should be created.
  */
-+ (void)activateMixpanelIntegration;
++ (void)registerPlugin:(id<OptimizelyPlugin>)plugin;
 
-#pragma mark - Variable getters
-/** @name Deprecated Methods */
+#pragma mark - Deprecated Stuff
+/** @name Deprecated Methods and Properties */
 
 /* These methods will be removed in a future release */
 
-/**  @deprecated.  Use `+trackEvent`.
+/**  @deprecated.  Use `+trackEvent:`.
  *
  * This method informs the server that a custom goal with key `description` occured.
  *
@@ -431,6 +536,15 @@ extern NSString *const OptimizelyGoalTriggeredNotification;
  * @see -dispatch
  */
 - (void)trackEvent:(NSString *)description __attribute((deprecated("Use [Optimizely trackEvent:]")));
+
+/**  @deprecated. Use `+trackRevenue: withDescription:`.
+ *
+ * This method informs Optimizely that a revenue goal custom event occured.
+ *
+ * @param revenueAmount The revenue amount in cents associated with the event
+ * @see +dispatch
+ */
++ (void)trackRevenue:(int)revenueAmount __attribute((deprecated("Use [Optimizely trackRevenue: withDescription: ] instead")));
 
 /**  @deprecated.  Use `+stringForKey:`.
  *
@@ -522,4 +636,19 @@ extern NSString *const OptimizelyGoalTriggeredNotification;
       withBlocks:(NSDictionary *)blocks
     defaultBlock:(void (^)(void))defaultBlock __attribute((deprecated("Use [Optimizely codeTestWithKey: blockOne:...]")));
 
+/** @deprecated.  Use `allExperiments` or `visitedExperiments`.
+ *
+ *  Provides an array of all the experiments currently active for the user to the variation
+ *  they're bucketed into for that experiment. The metadata includes experiment Id, variation Id,
+ *  experiment description and variation description.
+ *
+ *  When an experimenet is viewed, Optimizely will trigger an NSNotification with the key "OptimizelyExperimentVisitedNotification".
+ *  The userInfo will have metadata which includes experiment Id, variation Id, experiment description and variation description.
+ */
+@property (readonly, strong, nonatomic) NSArray *activeExperiments __attribute((deprecated("Use allExperiments or visitedExperiments")));
+
+/** @deprecated. Use `optimizelyEndUserId` for Optimizely's randomly generated end user Id
+ *  or `universalUserId` to access the read/write property that developers can edit.
+ */
+@property (nonatomic, strong) NSString *userId __attribute((deprecated("use optimizelyEndUserId or universalUserId")));
 @end

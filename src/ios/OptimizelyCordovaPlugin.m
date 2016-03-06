@@ -15,7 +15,7 @@ static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
                                resultWithStatus:CDVCommandStatus_OK
                                messageAsString:@"Editor Enabled"];
 
-    [self success:result callbackId:callbackId];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)startOptimizely:(CDVInvokedUrlCommand*)command
@@ -28,7 +28,7 @@ static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
                                resultWithStatus:CDVCommandStatus_OK
                                messageAsString:@"Optimizely Started"];
 
-    [self success:result callbackId:callbackId];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)booleanVariable:(CDVInvokedUrlCommand*)command
@@ -48,7 +48,7 @@ static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK];
 
-    [self success:result callbackId:callbackId];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)stringVariable:(CDVInvokedUrlCommand*)command
@@ -67,7 +67,7 @@ static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK];
 
-    [self success:result callbackId:callbackId];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)variableForKey:(CDVInvokedUrlCommand*)command
@@ -100,7 +100,7 @@ static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
                 resultWithStatus:CDVCommandStatus_ERROR];
     }
 
-    [self success:result callbackId:callbackId];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)codeBlock:(CDVInvokedUrlCommand*)command
@@ -119,7 +119,7 @@ static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK];
 
-    [self success:result callbackId:callbackId];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)executeCodeBlock:(CDVInvokedUrlCommand*)command
@@ -181,7 +181,7 @@ static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
                                  resultWithStatus:CDVCommandStatus_OK
                                  messageAsInt:blockIndex];
 
-      [self success:result callbackId:callbackId];
+      [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
 }
 
