@@ -9,8 +9,6 @@
     <engine name="cordova" version=">=3.4.0"/>
   </engines>
 
-  <asset src="www/optimizely.js" target="js/optimizely.js"/>
-
   <js-module src="www/optimizely.js" name="Optimizely">
     <clobbers target="optimizely" />
   </js-module>
