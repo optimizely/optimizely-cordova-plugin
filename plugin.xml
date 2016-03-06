@@ -9,6 +9,22 @@
     <engine name="cordova" version=">=3.4.0"/>
   </engines>
 
+  <js-module src="www/lib/lodash.js" name="lodash">
+    <runs/>
+  </js-module>
+
+  <js-module src="www/live_variables.js" name="live_variables">
+    <runs/>
+  </js-module>
+
+  <js-module src="www/native_mixin.js" name="native_mixin">
+    <runs/>
+  </js-module>
+
+  <js-module src="www/code_blocks.js" name="code_blocks">
+    <runs/>
+  </js-module>
+
   <js-module src="www/optimizely.js" name="Optimizely">
     <clobbers target="optimizely" />
   </js-module>
