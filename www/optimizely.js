@@ -1,30 +1,45 @@
 /*global cordova, module*/
+var _ = require('./lodash');
+var codeBlocks = require('./code_blocks');
+var liveVariables = require('./live_variables');
+var nativeMixin = require('./native_mixin');
 
-module.exports = {
-    booleanForKey: function(variableKey, successCallback, errorCallback) {
-      cordova.exec(successCallback, errorCallback, "Optimizely", "variableForKey", [variableKey, 'boolean']);
-    },
-    booleanVariable: function(variableKey, variableValue, successCallback, errorCallback) {
-      cordova.exec(successCallback, errorCallback, "Optimizely", "booleanVariable", [variableKey, variableValue]);
-    },
-    codeBlock: function(codeBlockKey, codeBranchNames, successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "Optimizely", "codeBlock", [codeBlockKey, codeBranchNames]);
-    },
-    enableEditor: function(successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "Optimizely", "enableEditor", []);
-    },
-    executeCodeBlock: function(codeBlockKey, codeBranches, context, errorCallback) {
-        cordova.exec(function(codeBranchIndex) {
-          codeBranches[parseInt(codeBranchIndex, 10)].apply(context);
-        }, errorCallback, "Optimizely", "executeCodeBlock", [codeBlockKey]);
-    },
-    startOptimizely: function(token, successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "Optimizely", "startOptimizely", [token]);
-    },
-    stringVariable: function(variableKey, variableValue, successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "Optimizely", "stringVariable", [variableKey, variableValue]);
-    },
-    stringForKey: function(variableKey, successCallback, errorCallback) {
-      cordova.exec(successCallback, errorCallback, "Optimizely", "variableForKey", [variableKey, 'string']);
-    }
-};
+var optimizely = _.mixin({
+  /**
+   * Enables the SDK to connect to the web editor
+   * Must be called before <startOptimizely>
+   * @param  {Function} successCallback
+   * @param  {Function} errorCallback
+   */
+  enableEditor: function(successCallback, errorCallback) {
+    this.execNativeMethod({
+      successCallback: successCallback,
+      errorCallback: errorCallback,
+      methodName: "enableEditor",
+      params: []
+    });
+  },
+  /**
+   * Initializes the Optimizely SDK
+   * All calls to register live variables and code blocks should happen before
+   * calling this method.
+   * @param  {String}   projectToken
+   * @param  {Function} successCallback
+   * @param  {Function} errorCallback
+   */
+  startOptimizely: function(projectToken, successCallback, errorCallback) {
+    this.execNativeMethod({
+      successCallback: successCallback,
+      errorCallback: errorCallback,
+      methodName: "startOptimizely",
+      params: [projectToken]
+    });
+  },
+}, nativeMixin);
+
+module.exports = _.extend(
+  {},
+  optimizely,
+  codeBlocks,
+  liveVariables
+);
