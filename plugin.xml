@@ -21,6 +21,10 @@
     <runs/>
   </js-module>
 
+  <js-module src="www/enums.js" name="enums">
+    <runs/>
+  </js-module>
+
   <js-module src="www/code_blocks.js" name="code_blocks">
     <runs/>
   </js-module>
