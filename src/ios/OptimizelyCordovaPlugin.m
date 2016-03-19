@@ -4,6 +4,7 @@
 
 static NSString *const STRING_VARIABLE_TYPE = @"string";
 static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
+static NSString *const NUMBER_VARIABLE_TYPE = @"number";
 
 - (void)enableEditor:(CDVInvokedUrlCommand*)command
 {
@@ -70,6 +71,26 @@ static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
+- (void)numberVariable:(CDVInvokedUrlCommand*)command
+{
+    NSString* callbackId = [command callbackId];
+    NSString* variableKey = [[command arguments] objectAtIndex:0];
+    NSNumber* variableValue = [[command arguments] objectAtIndex:1];
+
+    OptimizelyVariableKey *variable = [OptimizelyVariableKey optimizelyKeyWithKey:variableKey defaultNSNumber:variableValue];
+    [Optimizely preregisterVariableKey:variable];
+
+    if (_liveVariablesMap == nil) {
+      _liveVariablesMap = [[NSMutableDictionary alloc] init];
+    }
+    _liveVariablesMap[variableKey] = variable;
+
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK];
+
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
 - (void)variableForKey:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = [command callbackId];
@@ -85,6 +106,8 @@ static NSString *const BOOL_VARIABLE_TYPE = @"boolean";
         variableValue = [Optimizely stringForKey:optimizelyVariableKey];
       } else if ([variableType isEqualToString:BOOL_VARIABLE_TYPE]) {
         variableValue = [NSNumber numberWithBool:[Optimizely boolForKey:optimizelyVariableKey]];
+      } else if ([variableType isEqualToString:NUMBER_VARIABLE_TYPE]) {
+        variableValue = [Optimizely numberForKey:optimizelyVariableKey];
       }
 
       NSDictionary *resultDictionary = @{

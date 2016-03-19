@@ -47,6 +47,11 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
             String codeBlockKey = data.getString(0);
             executeCodeBlock(codeBlockKey, callbackContext);
             return true;
+        } else if (action.equals("numberVariable")) {
+            String variableKey = data.getString(0);
+            float variableValue = (float)data.getDouble(1);
+            numberVariable(variableKey, variableValue, callbackContext);
+            return true;
         } else if (action.equals("startOptimizely")) {
             String token = data.getString(0);
             startOptimizely(token, callbackContext);
@@ -127,6 +132,24 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
         }
       });
       return true;
+    }
+
+    private boolean numberVariable(final String variableKey, final float variableValue,
+      final CallbackContext callbackContext) {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          try {
+            if (liveVariables == null) {
+              liveVariables = new HashMap();
+            }
+
+            liveVariables.put(variableKey, Optimizely.floatVariable(variableKey, variableValue));
+            callbackContext.success();
+          } catch (Exception e) {
+            callbackContext.error("Unable to register live variable: " + e.getMessage());
+          }
+        }
+      })
     }
 
     private boolean variableForKey(final String variableKey, final CallbackContext callbackContext) {
