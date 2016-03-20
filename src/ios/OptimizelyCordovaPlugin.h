@@ -1,5 +1,6 @@
 #import <Cordova/CDV.h>
 #import <Optimizely/Optimizely.h>
+#import "OptimizelyCordovaLiveVariable.h"
 
 @interface OptimizelyCordovaPlugin : CDVPlugin
 
@@ -8,6 +9,7 @@
 
 - (void) booleanVariable:(CDVInvokedUrlCommand*)command;
 - (void) codeBlock:(CDVInvokedUrlCommand*)command;
+- (void) colorVariable:(CDVInvokedUrlCommand*)command;
 - (void) enableEditor:(CDVInvokedUrlCommand*)command;
 - (void) executeCodeBlock:(CDVInvokedUrlCommand*)command;
 - (void) stringVariable:(CDVInvokedUrlCommand*)command;

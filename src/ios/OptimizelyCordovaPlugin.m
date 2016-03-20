@@ -36,16 +36,26 @@ static NSString *const NUMBER_VARIABLE_TYPE = @"number";
 {
     NSString* callbackId = [command callbackId];
     NSString* variableKey = [[command arguments] objectAtIndex:0];
-    BOOL variableValue = [[command arguments] objectAtIndex:1];
+    id variableValue = [[command arguments] objectAtIndex:1];
 
-    OptimizelyVariableKey *variable = [OptimizelyVariableKey optimizelyKeyWithKey:variableKey defaultBOOL:variableValue];
-    [Optimizely preregisterVariableKey:variable];
+    [self registerVariableForKey:variableKey
+                           value:variableValue
+                            type:VARIABLE_TYPE_BOOLEAN];
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK];
 
-    if (_liveVariablesMap == nil) {
-      _liveVariablesMap = [[NSMutableDictionary alloc] init];
-    }
-    _liveVariablesMap[variableKey] = variable;
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
 
+- (void)colorVariable:(CDVInvokedUrlCommand*)command
+{
+    NSString* callbackId = [command callbackId];
+    NSString* variableKey = [[command arguments] objectAtIndex:0];
+    id variableValue = [[command arguments] objectAtIndex:1];
+
+    [self registerVariableForKey:variableKey
+                           value:variableValue
+                            type:VARIABLE_TYPE_COLOR];
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK];
 
@@ -56,15 +66,11 @@ static NSString *const NUMBER_VARIABLE_TYPE = @"number";
 {
     NSString* callbackId = [command callbackId];
     NSString* variableKey = [[command arguments] objectAtIndex:0];
-    NSString* variableValue = [[command arguments] objectAtIndex:1];
-    OptimizelyVariableKey *variable = [OptimizelyVariableKey optimizelyKeyWithKey:variableKey defaultNSString:variableValue];
-    [Optimizely preregisterVariableKey:variable];
+    id variableValue = [[command arguments] objectAtIndex:1];
 
-    if (_liveVariablesMap == nil) {
-      _liveVariablesMap = [[NSMutableDictionary alloc] init];
-    }
-    _liveVariablesMap[variableKey] = variable;
-
+    [self registerVariableForKey:variableKey
+                           value:variableValue
+                            type:VARIABLE_TYPE_STRING];
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK];
 
@@ -75,15 +81,11 @@ static NSString *const NUMBER_VARIABLE_TYPE = @"number";
 {
     NSString* callbackId = [command callbackId];
     NSString* variableKey = [[command arguments] objectAtIndex:0];
-    NSNumber* variableValue = [[command arguments] objectAtIndex:1];
+    id variableValue = [[command arguments] objectAtIndex:1];
 
-    OptimizelyVariableKey *variable = [OptimizelyVariableKey optimizelyKeyWithKey:variableKey defaultNSNumber:variableValue];
-    [Optimizely preregisterVariableKey:variable];
-
-    if (_liveVariablesMap == nil) {
-      _liveVariablesMap = [[NSMutableDictionary alloc] init];
-    }
-    _liveVariablesMap[variableKey] = variable;
+    [self registerVariableForKey:variableKey
+                           value:variableValue
+                            type:VARIABLE_TYPE_NUMBER];
 
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK];
@@ -95,24 +97,14 @@ static NSString *const NUMBER_VARIABLE_TYPE = @"number";
 {
     NSString* callbackId = [command callbackId];
     NSString* variableKey = [[command arguments] objectAtIndex:0];
-    NSString* variableType = [[command arguments] objectAtIndex:1];
 
-    OptimizelyVariableKey *optimizelyVariableKey = [_liveVariablesMap valueForKey:variableKey];
+    OptimizelyCordovaLiveVariable *variable = [_liveVariablesMap valueForKey:variableKey];
+
     CDVPluginResult* result;
-    if (optimizelyVariableKey != nil) {
-      id variableValue;
-
-      if ([variableType isEqualToString:STRING_VARIABLE_TYPE]) {
-        variableValue = [Optimizely stringForKey:optimizelyVariableKey];
-      } else if ([variableType isEqualToString:BOOL_VARIABLE_TYPE]) {
-        variableValue = [NSNumber numberWithBool:[Optimizely boolForKey:optimizelyVariableKey]];
-      } else if ([variableType isEqualToString:NUMBER_VARIABLE_TYPE]) {
-        variableValue = [Optimizely numberForKey:optimizelyVariableKey];
-      }
-
+    if (variable != nil) {
       NSDictionary *resultDictionary = @{
         @"variableKey": variableKey,
-        @"variableValue": variableValue
+        @"variableValue": [variable getValue]
       };
 
       result = [CDVPluginResult
@@ -124,6 +116,19 @@ static NSString *const NUMBER_VARIABLE_TYPE = @"number";
     }
 
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
+- (void)registerVariableForKey:(NSString*)key value:(id)value type:(int)type
+{
+    OptimizelyCordovaLiveVariable *variable = [[OptimizelyCordovaLiveVariable alloc] initWithKey:key
+                                                                                           value:value
+                                                                                            type:type];
+    [Optimizely preregisterVariableKey:[variable liveVariable]];
+
+    if (_liveVariablesMap == nil) {
+        _liveVariablesMap = [[NSMutableDictionary alloc] init];
+    }
+    _liveVariablesMap[key] = variable;
 }
 
 - (void)codeBlock:(CDVInvokedUrlCommand*)command
