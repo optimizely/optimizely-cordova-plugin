@@ -1,5 +1,6 @@
 exports.VARIABLE_TYPES = {
-  STRING: 'string',
   BOOLEAN: 'boolean',
+  COLOR: 'color',
   NUMBER: 'number',
+  STRING: 'string',
 };

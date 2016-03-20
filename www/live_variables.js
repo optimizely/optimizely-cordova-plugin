@@ -37,6 +37,37 @@ var liveVariables = {
     );
   },
   /**
+   * Retrieves the color value for the variable registered with the given variable key
+   * as a hex string
+   * @param  {String}   variableKey
+   * @param  {Function} successCallback
+   * @param  {Function} errorCallback
+   */
+  colorForKey: function(variableKey, successCallback, errorCallback) {
+    retrieveVariableValue(
+      variableKey,
+      enums.VARIABLE_TYPES.COLOR,
+      successCallback,
+      errorCallback
+    );
+  },
+  /**
+   * Registers a color live variable with the given variable key and default value
+   * @param  {String}   variableKey
+   * @param  {String}   defaultValue     color value in hex format
+   * @param  {Function} successCallback
+   * @param  {Function} errorCallback
+   */
+  colorVariable: function(variableKey, defaultValue, successCallback, errorCallback) {
+    registerVariable(
+      variableKey,
+      defaultValue,
+      enums.VARIABLE_TYPES.COLOR,
+      successCallback,
+      errorCallback
+    );
+  },
+  /**
    * Retrieves the number value for the variable registered with the given variable key
    * @param  {String}   variableKey
    * @param  {Function} successCallback

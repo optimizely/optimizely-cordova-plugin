@@ -1,15 +1,11 @@
 package com.optimizely.cordova;
 
-import android.text.TextUtils;
-import android.util.Log;
-
 import org.apache.cordova.*;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.optimizely.Optimizely;
-import com.optimizely.Variable.LiveVariable;
 import com.optimizely.CodeBlocks.CodeBranch;
 import com.optimizely.CodeBlocks.DefaultCodeBranch;
 import com.optimizely.CodeBlocks.OptimizelyCodeBlock;
@@ -19,26 +15,27 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class OptimizelyCordovaPlugin extends CordovaPlugin {
-    private static HashMap<String, LiveVariable> liveVariables;
+    private static HashMap<String, OptimizelyCordovaLiveVariable> liveVariables;
     private static HashMap<String, OptimizelyCodeBlock> codeBlocks;
 
     @Override
     public boolean execute(String action, JSONArray data, final CallbackContext callbackContext) throws JSONException {
 
         if (action.equals("booleanVariable")) {
-            String variableKey = data.getString(0);
-            boolean variableValue = data.getBoolean(1);
-            booleanVariable(variableKey, variableValue, callbackContext);
+            registerVariable(data, OptimizelyCordovaLiveVariable.BOOLEAN, callbackContext);
             return true;
         } else if (action.equals("codeBlock")) {
             String codeBlockKey = data.getString(0);
             JSONArray codeBlockBranchNamesJSON = data.getJSONArray(1);
             ArrayList<String> codeBlockBranchNames = new ArrayList();
             for (int i = 0; i < codeBlockBranchNamesJSON.length(); i++) {
-              String branchName = codeBlockBranchNamesJSON.get(i).toString();
-              codeBlockBranchNames.add(branchName);
+                String branchName = codeBlockBranchNamesJSON.get(i).toString();
+                codeBlockBranchNames.add(branchName);
             }
             codeBlock(codeBlockKey, codeBlockBranchNames, callbackContext);
+            return true;
+        } else if (action.equals("colorVariable")) {
+            registerVariable(data, OptimizelyCordovaLiveVariable.COLOR, callbackContext);
             return true;
         } else if (action.equals("enableEditor")) {
             enableEditor(callbackContext);
@@ -48,18 +45,14 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
             executeCodeBlock(codeBlockKey, callbackContext);
             return true;
         } else if (action.equals("numberVariable")) {
-            String variableKey = data.getString(0);
-            float variableValue = (float)data.getDouble(1);
-            numberVariable(variableKey, variableValue, callbackContext);
+            registerVariable(data, OptimizelyCordovaLiveVariable.NUMBER, callbackContext);
             return true;
         } else if (action.equals("startOptimizely")) {
             String token = data.getString(0);
             startOptimizely(token, callbackContext);
             return true;
         } else if (action.equals("stringVariable")) {
-            String variableKey = data.getString(0);
-            String variableValue = data.getString(1);
-            stringVariable(variableKey, variableValue, callbackContext);
+            registerVariable(data, OptimizelyCordovaLiveVariable.STRING, callbackContext);
             return true;
         } else if (action.equals("variableForKey")) {
             String variableKey = data.getString(0);
@@ -96,73 +89,39 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
       return true;
     }
 
-    private boolean stringVariable(final String variableKey, final String variableValue,
-      final CallbackContext callbackContext) {
-      cordova.getActivity().runOnUiThread(new Runnable() {
-        public void run() {
-          try {
-            if (liveVariables == null) {
-              liveVariables = new HashMap();
+    private boolean registerVariable(final JSONArray variableData, final int variableType, final CallbackContext callbackContext) {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (liveVariables == null) {
+                        liveVariables = new HashMap<String, OptimizelyCordovaLiveVariable>();
+                    }
+                    String variableKey = variableData.getString(0);
+
+                    OptimizelyCordovaLiveVariable liveVariable = OptimizelyCordovaLiveVariable.fromJSON(variableData, variableType);
+                    liveVariables.put(variableKey, liveVariable);
+                    callbackContext.success();
+                } catch (Exception e) {
+                    callbackContext.error("Unable to register live variable: " + e.getMessage());
+                }
             }
+        });
 
-            liveVariables.put(variableKey, Optimizely.stringVariable(variableKey, variableValue));
-            callbackContext.success();
-          } catch (Exception e) {
-            callbackContext.error("Unable to register live variable: " + e.getMessage());
-          }
-        }
-      });
-      return true;
-    }
-
-    private boolean booleanVariable(final String variableKey, final boolean variableValue,
-      final CallbackContext callbackContext) {
-      cordova.getActivity().runOnUiThread(new Runnable() {
-        public void run() {
-          try {
-            if (liveVariables == null) {
-              liveVariables = new HashMap();
-            }
-
-            liveVariables.put(variableKey, Optimizely.booleanVariable(variableKey, variableValue));
-            callbackContext.success();
-          } catch (Exception e) {
-            callbackContext.error("Unable to register live variable: " + e.getMessage());
-          }
-        }
-      });
-      return true;
-    }
-
-    private boolean numberVariable(final String variableKey, final float variableValue,
-      final CallbackContext callbackContext) {
-      cordova.getActivity().runOnUiThread(new Runnable() {
-        public void run() {
-          try {
-            if (liveVariables == null) {
-              liveVariables = new HashMap();
-            }
-
-            liveVariables.put(variableKey, Optimizely.floatVariable(variableKey, variableValue));
-            callbackContext.success();
-          } catch (Exception e) {
-            callbackContext.error("Unable to register live variable: " + e.getMessage());
-          }
-        }
-      })
+        return true;
     }
 
     private boolean variableForKey(final String variableKey, final CallbackContext callbackContext) {
       cordova.getActivity().runOnUiThread(new Runnable() {
         public void run() {
           if (liveVariables.containsKey(variableKey)) {
-            LiveVariable liveVariable = liveVariables.get(variableKey);
+            OptimizelyCordovaLiveVariable liveVariable = liveVariables.get(variableKey);
 
             try {
               // construct the JSON object for the variable
               JSONObject variableValue = new JSONObject();
               variableValue.put("variableKey", variableKey);
-              variableValue.put("variableValue", liveVariable.get());
+              variableValue.put("variableValue", liveVariable.getValue());
               callbackContext.success(variableValue);
             } catch (JSONException ex) {
               callbackContext.error(ex.getMessage());

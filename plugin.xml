@@ -43,6 +43,8 @@
 
     <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
     <source-file src="src/android/OptimizelyCordovaPlugin.java" target-dir="src/com/optimizely/cordova/"/>
+    <source-file src="src/android/OptimizelyCordovaLiveVariable.java" target-dir="src/com/optimizely/cordova/"/>
+    <source-file src="src/android/exceptions/InvalidVariableTypeException.java" target-dir="src/com/optimizely/cordova/exceptions"/>
   </platform>
 
   <platform name="ios">
@@ -55,6 +57,8 @@
 
     <header-file src="src/ios/OptimizelyCordovaPlugin.h" target-dir="OptimizelyCordovaPlugin"/>
     <source-file src="src/ios/OptimizelyCordovaPlugin.m" target-dir="OptimizelyCordovaPlugin"/>
+    <header-file src="src/ios/OptimizelyCordovaLiveVariable.h" target-dir="OptimizelyCordovaLiveVariable"/>
+    <source-file src="src/ios/OptimizelyCordovaLiveVariable.m" target-dir="OptimizelyCordovaLiveVariable"/>
 
     <framework src="src/ios/Optimizely.framework" custom="true" />
     <framework src="libicucore.dylib" />
