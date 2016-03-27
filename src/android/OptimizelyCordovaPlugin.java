@@ -54,6 +54,13 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
         } else if (action.equals("stringVariable")) {
             registerVariable(data, OptimizelyCordovaLiveVariable.STRING, callbackContext);
             return true;
+        } else if (action.equals("trackEvent")) {
+            String eventName = data.getString(0);
+            return trackEvent(eventName, callbackContext);
+        } else if (action.equals("trackRevenueWithDescription")) {
+            int revenueAmount = data.getInt(0);
+            String revenueDescription = data.getString(1);
+            return trackRevenueWithDescription(revenueAmount, revenueDescription, callbackContext);
         } else if (action.equals("variableForKey")) {
             String variableKey = data.getString(0);
             variableForKey(variableKey, callbackContext);
@@ -178,5 +185,27 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
         }
       });
       return true;
+    }
+
+    private boolean trackEvent(final String eventName, final CallbackContext callbackContext) {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Optimizely.trackEvent(eventName);
+                callbackContext.success();
+            }
+        });
+        return true;
+    }
+
+    private boolean trackRevenueWithDescription(final int revenueAmount, final String revenueDescription, final CallbackContext callbackContext) {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Optimizely.trackRevenueWithDescription(revenueAmount, revenueDescription);
+                callbackContext.success();
+            }
+        });
+        return true;
     }
 }

@@ -213,4 +213,29 @@ static NSString *const NUMBER_VARIABLE_TYPE = @"number";
     }
 }
 
+- (void)trackEvent:(CDVInvokedUrlCommand*)command
+{
+    NSString* callbackId = [command callbackId];
+    NSString* eventName = [[command arguments] objectAtIndex:0];
+    [Optimizely trackEvent:eventName];
+
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK];
+
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
+- (void)trackRevenueWithDescription:(CDVInvokedUrlCommand*)command
+{
+    NSString* callbackId = [command callbackId];
+    int revenueAmount = [[command arguments] objectAtIndex:0];
+    NSString* revenueDescription = [[command arguments] objectAtIndex:1];
+    [Optimizely trackRevenue:revenueAmount withDescription:revenueDescription];
+
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK];
+
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
 @end

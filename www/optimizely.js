@@ -1,6 +1,7 @@
 /*global cordova, module*/
 var _ = require('./lodash');
 var codeBlocks = require('./code_blocks');
+var goalTracking = require('./goal_tracking');
 var liveVariables = require('./live_variables');
 var nativeMixin = require('./native_mixin');
 
@@ -41,5 +42,6 @@ module.exports = _.extend(
   {},
   optimizely,
   codeBlocks,
+  goalTracking,
   liveVariables
 );
