@@ -122,6 +122,8 @@ window.optimizely.executeCodeBlock(
 Aside from the APIs for registering and using Live Variables and Code Blocks, the plugin also exposes the following APIs:
 - enabledEditor
 - startOptimizely
+- trackEvent
+- trackRevenueWithDescription
 
 For more information on these APIs please visit [Android Docs](http://developers.optimizely.com/android/reference/index.html) or [iOS Docs](http://developers.optimizely.com/ios/reference/index.html)
 

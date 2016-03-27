@@ -13,5 +13,7 @@
 - (void) enableEditor:(CDVInvokedUrlCommand*)command;
 - (void) executeCodeBlock:(CDVInvokedUrlCommand*)command;
 - (void) stringVariable:(CDVInvokedUrlCommand*)command;
+- (void) trackEvent:(CDVInvokedUrlCommand*)command;
+- (void) trackRevenueWithDescription:(CDVInvokedUrlCommand*)command;
 - (void) variableForKey:(CDVInvokedUrlCommand*)command;
 @end
