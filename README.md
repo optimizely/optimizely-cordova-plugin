@@ -1,6 +1,8 @@
 # Optimizely Cordova Plugin
 
-iOS [![Build Status](https://travis-ci.org/optimizely/optimizely-cordova-plugin.svg?branch=master)](https://travis-ci.org/optimizely/optimizely-cordova-plugin)
+iOS Build [![Build Status](https://travis-ci.org/optimizely/optimizely-cordova-plugin.svg?branch=master)](https://travis-ci.org/optimizely/optimizely-cordova-plugin)
+
+Android Build [![Circle CI](https://circleci.com/gh/optimizely/optimizely-cordova-plugin/tree/master.svg?style=svg)](https://circleci.com/gh/optimizely/optimizely-cordova-plugin/tree/master)
 
 Cordova Plugin for the Optimizely iOS and Android SDKs
 
