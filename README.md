@@ -1,5 +1,7 @@
 # Optimizely Cordova Plugin
 
+iOS [![Build Status](https://travis-ci.org/optimizely/optimizely-cordova-plugin.svg?branch=master)](https://travis-ci.org/optimizely/optimizely-cordova-plugin)
+
 Cordova Plugin for the Optimizely iOS and Android SDKs
 
 Allows developers developing hybrids apps using Cordova platforms such as Phonegap, Crosswalk, Ionic, Intel XDK to use the Optimizely SDKs for A/B
