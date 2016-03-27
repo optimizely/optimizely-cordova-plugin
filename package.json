@@ -1,0 +1,33 @@
+{
+  "name": "optimizely-cordova-plugin",
+  "version": "0.2.0",
+  "description": "Cordova plugin for the Optimizely Mobile SDKs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/optimizely/optimizely-cordova-plugin.git"
+  },
+  "keywords": [
+    "cordova",
+    "optimizely",
+    "A/B",
+    "testing",
+    "AB",
+    "Testing",
+    "optimization",
+    "marketing",
+    "optimize"
+  ],
+  "author": "Mike Ng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/optimizely/optimizely-cordova-plugin/issues"
+  },
+  "homepage": "https://github.com/optimizely/optimizely-cordova-plugin",
+  "devDependencies": {
+    "cordova": "^5.0.0",
+    "cordova-paramedic": "^0.5.0"
+  }
+}
