@@ -1,6 +1,13 @@
 {
-  "name": "optimizely-cordova-plugin",
-  "version": "0.2.0",
+  "name": "cordova-plugin-optimizely",
+  "version": "0.3.0",
+  "cordova": {
+    "id": "cordova-plugin-optimizely",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
   "description": "Cordova plugin for the Optimizely Mobile SDKs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

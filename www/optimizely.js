@@ -11,9 +11,10 @@ var optimizely = _.mixin({
    * Must be called before <startOptimizely>
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   enableEditor: function(successCallback, errorCallback) {
-    this.execNativeMethod({
+    return this.execNativeMethod({
       successCallback: successCallback,
       errorCallback: errorCallback,
       methodName: "enableEditor",
@@ -27,9 +28,14 @@ var optimizely = _.mixin({
    * @param  {String}   projectToken
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   startOptimizely: function(projectToken, successCallback, errorCallback) {
-    this.execNativeMethod({
+    if (!projectToken) {
+      throw new Error('Must pass in a project token');
+    }
+
+    return this.execNativeMethod({
       successCallback: successCallback,
       errorCallback: errorCallback,
       methodName: "startOptimizely",

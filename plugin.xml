@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-        id="com.optimizely.cordova"
-        version="0.1.0">
+        id="cordova-plugin-optimizely"
+        version="0.3.0">
 
   <name>Optimizely Cordova Plugin</name>
 
@@ -36,6 +36,11 @@
   <js-module src="www/optimizely.js" name="Optimizely">
     <clobbers target="optimizely" />
   </js-module>
+
+  <dependency
+    id="es6-promise-plugin"
+    url="https://github.com/vstirbu/PromisesPlugin.git">
+  </dependency>
 
   <platform name="android">
 

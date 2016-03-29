@@ -11,9 +11,10 @@ var liveVariables = {
    * @param  {String}   variableKey
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   booleanForKey: function(variableKey, successCallback, errorCallback) {
-    retrieveVariableValue(
+    return retrieveVariableValue(
       variableKey,
       enums.VARIABLE_TYPES.BOOLEAN,
       successCallback,
@@ -26,9 +27,10 @@ var liveVariables = {
    * @param  {Boolean}  defaultValue
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   booleanVariable: function(variableKey, defaultValue, successCallback, errorCallback) {
-    registerVariable(
+    return registerVariable(
       variableKey,
       defaultValue,
       enums.VARIABLE_TYPES.BOOLEAN,
@@ -42,9 +44,10 @@ var liveVariables = {
    * @param  {String}   variableKey
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   colorForKey: function(variableKey, successCallback, errorCallback) {
-    retrieveVariableValue(
+    return retrieveVariableValue(
       variableKey,
       enums.VARIABLE_TYPES.COLOR,
       successCallback,
@@ -57,9 +60,10 @@ var liveVariables = {
    * @param  {String}   defaultValue     color value in hex format
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   colorVariable: function(variableKey, defaultValue, successCallback, errorCallback) {
-    registerVariable(
+    return registerVariable(
       variableKey,
       defaultValue,
       enums.VARIABLE_TYPES.COLOR,
@@ -72,9 +76,10 @@ var liveVariables = {
    * @param  {String}   variableKey
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   numberForKey: function(variableKey, successCallback, errorCallback) {
-    retrieveVariableValue(
+    return retrieveVariableValue(
       variableKey,
       enums.VARIABLE_TYPES.NUMBER,
       successCallback,
@@ -87,9 +92,10 @@ var liveVariables = {
    * @param  {Number}   defaultValue
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   numberVariable: function(variableKey, defaultValue, successCallback, errorCallback) {
-    registerVariable(
+    return registerVariable(
       variableKey,
       defaultValue,
       enums.VARIABLE_TYPES.NUMBER,
@@ -103,9 +109,10 @@ var liveVariables = {
    * @param  {String}   defaultValue
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   stringVariable: function(variableKey, defaultValue, successCallback, errorCallback) {
-    registerVariable(
+    return registerVariable(
       variableKey,
       defaultValue,
       enums.VARIABLE_TYPES.STRING,
@@ -118,9 +125,10 @@ var liveVariables = {
    * @param  {String}   variableKey
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   stringForKey: function(variableKey, successCallback, errorCallback) {
-    retrieveVariableValue(
+    return retrieveVariableValue(
       variableKey,
       enums.VARIABLE_TYPES.STRING,
       successCallback,
@@ -136,9 +144,10 @@ var liveVariables = {
  * @param  {String}   variableType
  * @param  {Function} successCallback
  * @param  {Function} errorCallback
+ * @return {Promise}
  */
 function registerVariable(variableKey, defaultValue, variableType, successCallback, errorCallback) {
-  nativeMixin.execNativeMethod({
+  return nativeMixin.execNativeMethod({
     successCallback: successCallback,
     errorCallback: errorCallback,
     methodName: variableType + 'Variable',
@@ -152,9 +161,10 @@ function registerVariable(variableKey, defaultValue, variableType, successCallba
  * @param  {String}   variableType
  * @param  {Function} successCallback
  * @param  {Function} errorCallback
+ * @return {Promise}
  */
 function retrieveVariableValue(variableKey, variableType, successCallback, errorCallback) {
-  nativeMixin.execNativeMethod({
+  return nativeMixin.execNativeMethod({
     successCallback: successCallback,
     errorCallback: errorCallback,
     methodName: 'variableForKey',
