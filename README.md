@@ -20,25 +20,22 @@ testing and beyond!
 3. [APIs](#apis)
 
 
-## Usage
+## Installation
 
-### 1. Download plugin
-```
-git clone https://github.com/optimizely/optimizely-cordova-plugin
-```
+### Edge
 
-### 2. Install into project
-```
-cd into root of your cordova/phonegap project
-cordova plugin add <PATH TO PLUGIN>
-```
+`cordova plugin add https://github.com/optimizely/optimizely-cordova-plugin`
 
-### 3. Build your app
-```
-cordova build
-```
+### Stable (via npm)
 
-### 4. Use the `optimizely` object to make API calls
+`cordova plugin add cordova-plugin-optimizely`
+
+
+## Uninstall plugin
+
+Use the cordova CLI to remove the plugin
+
+`cordova plugin remove cordova-plugin-optimizely`
 
 
 ## Start A/B Testing!
@@ -49,7 +46,9 @@ cordova build
 
 3. Grab your project token
 
-4. Call startOptimizely with your token
+4. Register [Live Variables](#live-variables) and [Code Blocks](#code-blocks)
+
+5. Call startOptimizely with your token
 ```
 window.optimizely.startOptimizely(<token>)
   .then(
