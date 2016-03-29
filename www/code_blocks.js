@@ -11,9 +11,10 @@ var codeBlocks = {
    * @param  {Array<String>}  codeBranchNames
    * @param  {Function}       successCallback
    * @param  {Function}       errorCallback
+   * @return {Promise}
    */
   codeBlock: function(codeBlockKey, codeBranchNames, successCallback, errorCallback) {
-    this.execNativeMethod({
+    return this.execNativeMethod({
       successCallback: successCallback,
       errorCallback: errorCallback,
       methodName: "codeBlock",
@@ -26,10 +27,11 @@ var codeBlocks = {
    * @param  {Array<Function>}  codeBranches
    * @param  {Object}           context
    * @param  {Function}         errorCallback
+   * @return {Promise}
    */
   executeCodeBlock: function(codeBlockKey, codeBranches, context, errorCallback) {
     // the native call actually just returns an index of the branch to execute
-    this.execNativeMethod({
+    return this.execNativeMethod({
       successCallback: function(codeBranchIndex) {
         codeBranches[parseInt(codeBranchIndex, 10)].apply(context);
       },

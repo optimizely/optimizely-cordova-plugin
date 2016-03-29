@@ -51,7 +51,15 @@ cordova build
 
 4. Call startOptimizely with your token
 ```
-window.optimizely.startOptimizely(<token>, successCallback, errorCallback)
+window.optimizely.startOptimizely(<token>)
+  .then(
+    function(result) {
+      // success callback
+    },
+    function(error) {
+      // error callback
+    }
+  )
 ```
 
 ## Available Features
@@ -62,28 +70,28 @@ Live Variables allow you to designate variables in your app that can be assigned
 
 To register a live variable you can call the Optimizely API:
 ```
-window.optimizely.numberVariable(
-  'gravity', 9.8,
-  function() {
-    // this callback function will execute once the variable has been registered with the Optimizely SDK
-  },
-  function(errorMsg) {
-   // error callback
-  }
-)
+window.optimizely.numberVariable('gravity', 9.8)
+  .then(
+    function() {
+      // this callback function will execute once the variable has been registered with the Optimizely SDK
+    },
+    function(errorMsg) {
+     // error callback
+    }
+  );
 ```
 
 To use the live variable:
 ```
-window.optimizely.numberForKey(
-  'gravity',
-  function(variableValue) {
-    // this callback function will execute once the plugin has retrieved the stored value for the given variable key.
-  },
-  function(errorMsg) {
-    // error callback
-  }
-)
+window.optimizely.numberForKey('gravity')
+  .then(
+    function(variableValue) {
+      // this callback function will execute once the plugin has retrieved the stored value for the given variable key.
+    },
+    function(errorMsg) {
+      // error callback
+    }
+  );
 ```
 
 ### 2. Code Blocks
@@ -91,16 +99,15 @@ Code Blocks allow developers to create variations that execute different code pa
 
 To register a code block:
 ```
-window.optimizely.codeBlock(
-  'checkoutFlow',
-  ['single_page', 'multi_page'],
-  function() {
-    // success callback
-  },
-  function(errorMsg) {
-    // error callback
-  }
-)
+window.optimizely.codeBlock('checkoutFlow', ['single_page', 'multi_page'])
+  .then(
+    function() {
+      // success callback
+    },
+    function(errorMsg) {
+      // error callback
+    }
+  );
 ```
 
 To use a code block:
@@ -124,10 +131,12 @@ window.optimizely.executeCodeBlock(
 
 ## APIs
 Aside from the APIs for registering and using Live Variables and Code Blocks, the plugin also exposes the following APIs:
-- enabledEditor
-- startOptimizely
-- trackEvent
-- trackRevenueWithDescription
+- `window.optimizely.enabledEditor()`
+- `window.optimizely.startOptimizely(projectToken)`
+- `window.optimizely.trackEvent('eventName')
+- `window.optimizely.trackRevenueWithDescription(100, 'revenueDescription')`
+
+All API calls return a Promise object using the ES6 promise specification.
 
 For more information on these APIs please visit [Android Docs](http://developers.optimizely.com/android/reference/index.html) or [iOS Docs](http://developers.optimizely.com/ios/reference/index.html)
 

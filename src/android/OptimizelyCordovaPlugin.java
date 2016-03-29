@@ -77,7 +77,7 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
             Optimizely.enableEditor();
             // right now we do not support visual editing
             Optimizely.setVisualExperimentsEnabled(false);
-            callbackContext.success();
+            callbackContext.success("Editor Enabled");
           } catch (Exception e) {
             callbackContext.error(e.getMessage());
           }
@@ -90,7 +90,7 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
       cordova.getActivity().runOnUiThread(new Runnable() {
         public void run() {
           Optimizely.startOptimizely(socketToken, cordova.getActivity().getApplication());
-          callbackContext.success("Optimizely Started!");
+          callbackContext.success("Optimizely Started");
         }
       });
       return true;

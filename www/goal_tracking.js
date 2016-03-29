@@ -10,13 +10,14 @@ var goalTracking = {
    * @param  {String}   eventName
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   trackEvent: function(eventName, successCallback, errorCallback) {
     if (!eventName) {
       throw new Error('Must supply an event name');
     }
 
-    this.execNativeMethod({
+    return this.execNativeMethod({
       successCallback: successCallback,
       errorCallback: errorCallback,
       methodName: 'trackEvent',
@@ -29,6 +30,7 @@ var goalTracking = {
    * @param  {String}   revenueDescription
    * @param  {Function} successCallback
    * @param  {Function} errorCallback
+   * @return {Promise}
    */
   trackRevenueWithDescription: function(revenueAmount, revenueDescription, successCallback, errorCallback) {
     try {
@@ -41,7 +43,7 @@ var goalTracking = {
       throw new Error('Must supply a description for revenue tracking');
     }
 
-    this.execNativeMethod({
+    return this.execNativeMethod({
       successCallback: successCallback,
       errorCallback: errorCallback,
       methodName: 'trackRevenueWithDescription',
