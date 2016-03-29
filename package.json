@@ -27,7 +27,7 @@
     "marketing",
     "optimize"
   ],
-  "author": "Mike Ng",
+  "author": "Mike Ng <mikeng13@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/optimizely/optimizely-cordova-plugin/issues"
