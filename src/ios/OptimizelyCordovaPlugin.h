@@ -12,6 +12,9 @@
 - (void) colorVariable:(CDVInvokedUrlCommand*)command;
 - (void) enableEditor:(CDVInvokedUrlCommand*)command;
 - (void) executeCodeBlock:(CDVInvokedUrlCommand*)command;
+- (void) refreshExperimentData:(CDVInvokedUrlCommand*)command;
+- (void) setCustomTag:(CDVInvokedUrlCommand*)command;
+- (void) startOptimizely:(CDVInvokedUrlCommand*)command;
 - (void) stringVariable:(CDVInvokedUrlCommand*)command;
 - (void) trackEvent:(CDVInvokedUrlCommand*)command;
 - (void) trackRevenueWithDescription:(CDVInvokedUrlCommand*)command;

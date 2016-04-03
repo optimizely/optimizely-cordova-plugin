@@ -17,8 +17,38 @@ var optimizely = _.mixin({
     return this.execNativeMethod({
       successCallback: successCallback,
       errorCallback: errorCallback,
-      methodName: "enableEditor",
+      methodName: 'enableEditor',
       params: []
+    });
+  },
+  /**
+   * Manually force Optimizely to reset all experiments and try to re-bucket the user from "scratch."
+   * @param  {Function} successCallback
+   * @param  {Function} errorCallback
+   * @return {Promise}
+   */
+  refreshExperimentData: function(successCallback, errorCallback) {
+    return this.execNativeMethod({
+      successCallback: successCallback,
+      errorCallback: errorCallback,
+      methodName: 'refreshExperimentData',
+      params: [],
+    });
+  },
+  /**
+   * Target users based on variables and attributes before Optimizely starts.
+   * Should be called before "startOptimizely"
+   * @param {String}   tagName
+   * @param {String}   tagValue
+   * @param {Function} successCallback
+   * @param {Function} errorCallback
+   */
+  setCustomTag: function(tagName, tagValue, successCallback, errorCallback) {
+    return this.execNativeMethod({
+      successCallback: successCallback,
+      errorCallback: errorCallback,
+      methodName: 'setCustomTag',
+      params: [tagName, tagValue],
     });
   },
   /**
@@ -38,7 +68,7 @@ var optimizely = _.mixin({
     return this.execNativeMethod({
       successCallback: successCallback,
       errorCallback: errorCallback,
-      methodName: "startOptimizely",
+      methodName: 'startOptimizely',
       params: [projectToken]
     });
   },

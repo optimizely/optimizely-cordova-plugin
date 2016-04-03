@@ -131,8 +131,10 @@ window.optimizely.executeCodeBlock(
 ## APIs
 Aside from the APIs for registering and using Live Variables and Code Blocks, the plugin also exposes the following APIs:
 - `window.optimizely.enabledEditor()`
+- `window.optimizely.refreshExperimentData()`
+- `window.optimizely.setCustomTag(tagName, tagValue)`
 - `window.optimizely.startOptimizely(projectToken)`
-- `window.optimizely.trackEvent('eventName')
+- `window.optimizely.trackEvent('eventName')`
 - `window.optimizely.trackRevenueWithDescription(100, 'revenueDescription')`
 
 All API calls return a Promise object using the ES6 promise specification.
