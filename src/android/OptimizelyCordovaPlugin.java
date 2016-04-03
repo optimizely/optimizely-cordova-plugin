@@ -47,10 +47,16 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
         } else if (action.equals("numberVariable")) {
             registerVariable(data, OptimizelyCordovaLiveVariable.NUMBER, callbackContext);
             return true;
+        } else if (action.equals("refreshExperimentData")) {
+            return refreshExperimentData(callbackContext);
         } else if (action.equals("startOptimizely")) {
             String token = data.getString(0);
             startOptimizely(token, callbackContext);
             return true;
+        } else if (action.equals("setCustomTag")) {
+            String tagName = data.getString(0);
+            String tagValue = data.getString(1);
+            return setCustomTag(tagName, tagValue, callbackContext);
         } else if (action.equals("stringVariable")) {
             registerVariable(data, OptimizelyCordovaLiveVariable.STRING, callbackContext);
             return true;
@@ -182,6 +188,28 @@ public class OptimizelyCordovaPlugin extends CordovaPlugin {
           } else {
             callbackContext.error("Codeblock for key: " + codeBlockKey + " does not exist.");
           }
+        }
+      });
+      return true;
+    }
+
+    private boolean refreshExperimentData(final CallbackContext callbackContext) {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          Optimizely.refreshExperimentData();
+          callbackContext.success();
+        }
+      });
+      return true;
+    }
+
+    private boolean setCustomTag(final String tagName, final String tagValue, final CallbackContext callbackContext) {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          Optimizely.setCustomTag(tagName, tagValue);
+          callbackContext.success();
         }
       });
       return true;

@@ -213,6 +213,32 @@ static NSString *const NUMBER_VARIABLE_TYPE = @"number";
     }
 }
 
+- (void)refreshExperimentData:(CDVInvokedUrlCommand*)command
+{
+    NSString* callbackId = [command callbackId];
+    [Optimizely refreshExperiments];
+
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK
+                               messageAsString:@"OK"];
+
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
+- (void)setCustomTag:(CDVInvokedUrlCommand*)command
+{
+    NSString* callbackId = [command callbackId];
+    NSString* tagName = [[command arguments] objectAtIndex:0];
+    NSString* tagValue = [[command arguments] objectAtIndex:1];
+    [Optimizely setValue:tagName forCustomTag:tagValue];
+
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK
+                               messageAsString:@"OK"];
+
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
 - (void)trackEvent:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = [command callbackId];

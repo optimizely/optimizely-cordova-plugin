@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-optimizely",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "cordova": {
     "id": "cordova-plugin-optimizely",
     "platforms": [
